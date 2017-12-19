@@ -1,9 +1,7 @@
-# three-dxf-loader
+# DXFLoader
 A DXF Loader for three.js
 
-import THREE from 'three';
-import DXFLoader from 'three-dxf-loader'
-
-...
-
-DFXLoader(THREE);
+let loader = new THREE.DXFLoader();
+loader.load('URL', function(data) {
+  scene.add(data);
+)};
