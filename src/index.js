@@ -5,7 +5,11 @@
 // Depends on dxf-parser
 // https://github.com/gdsestimating/dxf-parser
 
-import DxfParser from 'dxf-parser';
+if(typeof THREE == 'undefined' && typeof require != 'undefined')
+    var THREE = require('three');
+
+if(typeof DxfParser == 'undefined' && typeof require != 'undefined')
+    var DxfParser = require('dxf-parser');
 
 /**
  * Returns the angle in radians of the vector (p1,p2). In other words, imagine
@@ -15,8 +19,6 @@ import DxfParser from 'dxf-parser';
  * @param  {Object} p2 end point of the vector
  * @return {Number} the angle
  */
-
-module.exports = function (THREE) {
 
 THREE.Math.angle2 = function(p1, p2) {
 	var v1 = new THREE.Vector2(p1.x, p1.y);
@@ -89,31 +91,16 @@ THREE.DXFLoader.prototype = {
 
 	constructor: THREE.DXFLoader,
 
-	load: function ( url, onLoad, onProgress, onError ) {
+	load: function (url, onLoad, onProgress, onError) {
 
-		var scope = this;
+        var scope = this;
 
-		var loader = new THREE.XHRLoader( scope.manager );
-		loader.setPath( this.path );
-		loader.load( url, function ( text ) {
+        var loader = new THREE.FileLoader( this.manager );
+        loader.load( url, function ( text ) {
+            onLoad( scope.parse( new DxfParser().parseSync(text) ) );
+        }, onProgress, onError);
 
-      var dxfParser = new DxfParser();
-
-      try {
-
-        var dxf = dxfParser.parseSync(text);
-        onLoad( scope.parse( dxf ) );
-
-      }catch(err){
-
-        return console.error(err.stack);
-
-      }
-
-
-		}, onProgress, onError );
-
-	},
+    },
 
   parse: function (data) {
 
@@ -447,7 +434,5 @@ THREE.DXFLoader.prototype = {
     }
 
   }
-
-};
 
 };
